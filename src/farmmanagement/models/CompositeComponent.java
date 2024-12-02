@@ -49,4 +49,19 @@ public class CompositeComponent extends AbstractFarmComponent {
         }
         return rootItem;
     }
+
+    public List<FarmComponent> getAllNodes() {
+        List<FarmComponent> nodes = new ArrayList<>();
+        nodes.add(this); // Add the current composite node
+
+        // Recursively add all children nodes
+        for (FarmComponent child : children) {
+            if (child instanceof CompositeComponent) {
+                // If the child is a CompositeComponent, get its nodes
+                nodes.addAll(((CompositeComponent) child).getAllNodes());
+            }
+        }
+        return nodes;
+    }
+
 }

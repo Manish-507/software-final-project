@@ -19,11 +19,12 @@ public class DashboardController implements Initializable {
 
     @FXML
     private TreeView<String> treeview;
+    private CompositeComponent rootComponent;
 
     @Override
     public void initialize(URL url, ResourceBundle rb) {
         // Initialize the Root Component when Dashboard is launched
-        CompositeComponent rootComponent = initializeRootComponent();
+        this.rootComponent = initializeRootComponent();
         refreshTree(rootComponent);
     }
 
@@ -48,7 +49,10 @@ public class DashboardController implements Initializable {
             Parent root = loader.load();
 
             if (isItemContainerView) {
-                // Access AddItemContainer Controller.
+                AddItemContainerController controller = loader.getController();
+                controller.setCompositeComponent(rootComponent);
+                controller.populateItemContainerDropdown();
+                controller.setDashboardController(this);
             } else {
                 // Access AddItem Controller.
             }
