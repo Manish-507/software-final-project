@@ -96,6 +96,7 @@ public class DashboardController implements Initializable {
                 EditItemContainerController controller = loader.getController();
                 controller.setCompositeComponent(rootComponent);
                 controller.setFarmComponent((CompositeComponent) component);
+                controller.setDashboardController(this);
                 controller.populateItemContainerDropdown();
             } else if (component instanceof LeafComponent) {
 //                EditItemController controller = loader.getController();

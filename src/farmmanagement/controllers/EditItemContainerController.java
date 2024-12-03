@@ -87,6 +87,7 @@ public class EditItemContainerController implements Initializable {
             selectedComponent.addComponent(toEditComponent);
 
             closeWindow();
+
             if (dashboardController != null) {
                 dashboardController.refreshTree(rootComponent);
             }
@@ -109,7 +110,7 @@ public class EditItemContainerController implements Initializable {
         if (nameField.getText().isEmpty()) {
             errorMessage += "Name cannot be empty.\n";
         }
-        if (priceField.getText().isEmpty() || !isInteger(priceField.getText())) {
+        if (priceField.getText().isEmpty() || !isDouble(priceField.getText())) {
             errorMessage += "Price must be a valid number.\n";
         }
         if (positionXField.getText().isEmpty() || !isInteger(positionXField.getText()) || !isInsideComponent(positionXField.getText(), positionYField.getText(), heightField.getText(), widthField.getText())) {
@@ -132,6 +133,15 @@ public class EditItemContainerController implements Initializable {
             return true;
         } else {
             showErrorDialog("Invalid Input", "Please fix the following errors:", errorMessage);
+            return false;
+        }
+    }
+
+    private boolean isDouble(String text) {
+        try {
+            Double.parseDouble(text);
+            return true;
+        } catch (NumberFormatException e) {
             return false;
         }
     }
