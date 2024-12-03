@@ -13,7 +13,11 @@ public interface FarmComponent {
     // Common property methods
     String getName();
 
+    void setName(String name);
+
     double getPrice();
+
+    void setPrice(double price);
 
     void setPosition(int x, int y);
 

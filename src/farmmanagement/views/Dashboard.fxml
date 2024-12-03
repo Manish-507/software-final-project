@@ -10,7 +10,7 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<AnchorPane xmlns:fx="http://javafx.com/fxml/1" id="AnchorPane" scaleShape="false" xmlns="http://javafx.com/javafx/23.0.1" fx:controller="farmmanagement.controllers.DashboardController">
+<AnchorPane id="AnchorPane" scaleShape="false" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="farmmanagement.controllers.DashboardController">
     <children>
         <HBox>
             <children>
@@ -31,12 +31,12 @@
                         </Separator>
                         <HBox>
                             <children>
-                                <Button mnemonicParsing="false" text="Add Item Container" onAction="#openAddItemContainerWindow" >
+                                <Button mnemonicParsing="false" onAction="#openAddItemContainerWindow" text="Add Item Container">
                                     <HBox.margin>
                                         <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
                                     </HBox.margin>
                                 </Button>
-                                <Button mnemonicParsing="false" text="Add Item" onAction="#openAddItemWindow">
+                                <Button mnemonicParsing="false" onAction="#openAddItemWindow" text="Add Item">
                                     <HBox.margin>
                                         <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
                                     </HBox.margin>
@@ -61,15 +61,18 @@
                                 <Insets left="10.0" />
                             </padding>
                         </Label>
-                        <TreeView prefHeight="200.0" prefWidth="200.0" fx:id="treeview" >
+                        <TreeView fx:id="treeview" prefHeight="200.0" prefWidth="200.0">
                             <VBox.margin>
                                 <Insets bottom="10.0" left="10.0" right="10.0" />
                             </VBox.margin>
                         </TreeView>
-                        <Button layoutX="92.0" layoutY="20.0" mnemonicParsing="false" text="Delete Node" onAction="#handleDeleteButtonAction">
+                        <Button layoutX="92.0" layoutY="20.0" mnemonicParsing="false" onAction="#handleDeleteButtonAction" text="Delete Node">
                             <HBox.margin>
                                 <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
                             </HBox.margin>
+                     <VBox.margin>
+                        <Insets bottom="10.0" left="10.0" />
+                     </VBox.margin>
                         </Button>
                     </children>
                 </VBox>

@@ -22,4 +22,14 @@ public class LeafComponent extends AbstractFarmComponent {
     public TreeItem<String> toTreeItem() {
         return new TreeItem<>(this.getName());
     }
+
+    @Override
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    @Override
+    public void setPrice(double price) {
+        this.price = price;
+    }
 }

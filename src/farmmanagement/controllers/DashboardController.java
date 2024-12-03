@@ -1,5 +1,6 @@
 package farmmanagement.controllers;
 
+import farmmanagement.controllers.EditItemContainerController;
 import farmmanagement.models.CompositeComponent;
 import farmmanagement.models.FarmComponent;
 import farmmanagement.models.LeafComponent;
@@ -36,6 +37,25 @@ public class DashboardController implements Initializable {
         TreeItem<String> rootTreeItem = rootComponent.toTreeItem();
         treeview.setRoot(rootTreeItem);
         rootTreeItem.setExpanded(true);
+
+        treeview.setOnMouseClicked(event -> {
+            if (event.getClickCount() == 2) { // Detect double-click
+                TreeItem<String> selectedItem = treeview.getSelectionModel().getSelectedItem();
+
+                if (selectedItem != null) {
+                    String component = selectedItem.getValue();
+                    FarmComponent selectedComponent = rootComponent.findComponentByName(component);
+                    if (selectedComponent instanceof CompositeComponent) {
+                        launchEditWindow("/farmmanagement/views/EditItemContainer.fxml", "Edit Item Container", selectedComponent);
+                    } else if (selectedComponent instanceof LeafComponent) {
+                        launchEditWindow("/farmmanagement/views/EditItem.fxml", "Edit Item", selectedComponent);
+                    } else {
+                        showErrorDialog("Error", "Invalid Selection", "The selected item is not valid for editing.");
+                    }
+                }
+            }
+        });
+
     }
 
     public void openAddItemContainerWindow(ActionEvent event) {
@@ -68,6 +88,30 @@ public class DashboardController implements Initializable {
     }
 
     // HELPER METHODS
+    private void launchEditWindow(String fxmlPath, String title, FarmComponent component) {
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource(fxmlPath));
+            Parent root = loader.load();
+            if (component instanceof CompositeComponent) {
+                EditItemContainerController controller = loader.getController();
+                controller.setCompositeComponent(rootComponent);
+                controller.setFarmComponent((CompositeComponent) component);
+                controller.populateItemContainerDropdown();
+            } else if (component instanceof LeafComponent) {
+//                EditItemController controller = loader.getController();
+//                controller.setComponent((LeafComponent) component);
+            }
+
+            Stage stage = new Stage();
+            stage.setTitle(title);
+            stage.setScene(new Scene(root));
+            stage.show();
+        } catch (Exception e) {
+            e.printStackTrace();
+            showErrorDialog("Error", "Window Loading Error", "An error occurred while loading the window. Please try again.");
+        }
+    }
+
     private void launchChildWindow(String fxmlPath, String title, boolean isItemContainerView) {
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource(fxmlPath));
