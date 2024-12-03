@@ -86,11 +86,11 @@ public class AddItemController implements Initializable {
         if (priceField.getText().isEmpty() || !isInteger(priceField.getText())) {
             errorMessage += "Price must be a valid number.\n";
         }
-        if (positionXField.getText().isEmpty() || !isInteger(positionXField.getText()) || !isInsideComponent(positionXField.getText(), positionYField.getText())) {
-            errorMessage += "Location X must be a valid integer & in the Selected Container Boundaries.\n";
+        if (positionXField.getText().isEmpty() || !isInteger(positionXField.getText()) || !isInsideComponent(positionXField.getText(), positionYField.getText(), heightField.getText(), widthField.getText())) {
+            errorMessage += "Item you trying to add must be in the Selected Container Boundaries.\n";
         }
-        if (positionYField.getText().isEmpty() || !isInteger(positionYField.getText()) || !isInsideComponent(positionXField.getText(), positionYField.getText())) {
-            errorMessage += "Location Y must be a valid integer & in the Selected Container Boundaries.\n";
+        if (positionYField.getText().isEmpty() || !isInteger(positionYField.getText()) || !isInsideComponent(positionXField.getText(), positionYField.getText(), heightField.getText(), widthField.getText())) {
+            errorMessage += "Item you trying to add must be in the Selected Container Boundaries.\n";
         }
         if (lengthField.getText().isEmpty() || !isFloat(lengthField.getText()) || Float.parseFloat(lengthField.getText()) <= 0) {
             errorMessage += "Length must be a valid positive number.\n";
@@ -128,14 +128,18 @@ public class AddItemController implements Initializable {
         }
     }
 
-    private boolean isInsideComponent(String x, String y) {
+    private boolean isInsideComponent(String x, String y, String h, String w) {
         int positionX = Integer.parseInt(x);
         int positionY = Integer.parseInt(y);
+        int width = Integer.parseInt(w);
+        int height = Integer.parseInt(h);
+
         int[] containerPosition = selectedComponent.getPosition();
+        int[] containerDimensions = selectedComponent.getDimensions();
         if (selectedComponent.getName().equals("Root")) {
             return true;
         }
-        if (positionX == containerPosition[0] && positionY == containerPosition[1]) {
+        if (positionX == containerPosition[0] && positionY == containerPosition[1] && width <= containerDimensions[1] && height <= containerDimensions[2]) {
             return true;
         } else {
             return false;

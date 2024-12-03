@@ -123,7 +123,7 @@ public class DashboardController implements Initializable {
         CompositeComponent root = new CompositeComponent("Root", 0, 0, 0, 1, 800, 800);
         CompositeComponent barn = new CompositeComponent("Barn", 1000, 10, 20, 50, 60, 30);
         CompositeComponent livestockArea = new CompositeComponent("Live-stock-area", 500, 15, 25, 30, 40, 20);
-        LeafComponent cow = new LeafComponent("Cow", 200, 17, 27, 10, 10, 10);
+        LeafComponent cow = new LeafComponent("Cow", 200, 15, 25, 10, 10, 10);
         livestockArea.addComponent(cow);
         barn.addComponent(livestockArea);
         root.addComponent(barn);
