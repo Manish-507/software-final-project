@@ -64,4 +64,23 @@ public class CompositeComponent extends AbstractFarmComponent {
         return nodes;
     }
 
+    public CompositeComponent findComponentByName(String name) {
+        // Check if this component matches the name
+        if (this.getName().equals(name)) {
+            return this;
+        }
+
+        // Recursively search through children
+        for (FarmComponent child : this.getChildren()) {
+            if (child instanceof CompositeComponent) {
+                CompositeComponent found = ((CompositeComponent) child).findComponentByName(name);
+                if (found != null) {
+                    return found;
+                }
+            }
+        }
+
+        // Return null if not found
+        return null;
+    }
 }

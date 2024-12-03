@@ -1,6 +1,7 @@
 package farmmanagement.controllers;
 
 import farmmanagement.models.CompositeComponent;
+import farmmanagement.models.FarmComponent;
 import farmmanagement.models.LeafComponent;
 import java.net.URL;
 import java.util.ResourceBundle;
@@ -29,6 +30,9 @@ public class DashboardController implements Initializable {
     }
 
     public void refreshTree(CompositeComponent rootComponent) {
+        if (rootComponent == null) {
+            throw new IllegalArgumentException("Root component cannot be null.");
+        }
         TreeItem<String> rootTreeItem = rootComponent.toTreeItem();
         treeview.setRoot(rootTreeItem);
         rootTreeItem.setExpanded(true);
@@ -40,6 +44,27 @@ public class DashboardController implements Initializable {
 
     public void openAddItemWindow(ActionEvent event) {
         launchChildWindow("/farmmanagement/views/AddItem.fxml", "Add New Item", false);
+    }
+
+    @FXML
+    private void handleDeleteButtonAction() {
+        TreeItem<String> selectedTreeItem = treeview.getSelectionModel().getSelectedItem();
+
+        if (selectedTreeItem == null) {
+            System.out.println("No item selected for deletion.");
+            return;
+        }
+        if ("Root".equals(selectedTreeItem.getValue())) {
+            showErrorDialog("Error", "Cannot Delete Container", "Selected Item Container cannot be deleted since it is the ROOT of the Farm.");
+            return;
+        }
+        String selectedName = selectedTreeItem.getValue();
+        if (deleteComponent(rootComponent, selectedName)) {
+            refreshTree(rootComponent);
+            System.out.println("Deleted node: " + selectedName);
+        } else {
+            System.out.println("Failed to delete node: " + selectedName);
+        }
     }
 
     // HELPER METHODS
@@ -54,7 +79,10 @@ public class DashboardController implements Initializable {
                 controller.populateItemContainerDropdown();
                 controller.setDashboardController(this);
             } else {
-                // Access AddItem Controller.
+                AddItemController controller = loader.getController();
+                controller.setCompositeComponent(rootComponent);
+                controller.populateItemContainerDropdown();
+                controller.setDashboardController(this);
             }
 
             Stage stage = new Stage();
@@ -67,6 +95,22 @@ public class DashboardController implements Initializable {
         }
     }
 
+    private boolean deleteComponent(CompositeComponent parent, String nameToDelete) {
+        for (FarmComponent child : parent.getChildren()) {
+            if (child.getName().equals(nameToDelete)) {
+                parent.removeComponent(child);
+                return true;
+            }
+            if (child instanceof CompositeComponent) {
+                boolean deleted = deleteComponent((CompositeComponent) child, nameToDelete);
+                if (deleted) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
     private void showErrorDialog(String title, String header, String message) {
         Alert alert = new Alert(Alert.AlertType.ERROR);
         alert.setTitle(title);
@@ -76,7 +120,7 @@ public class DashboardController implements Initializable {
     }
 
     private CompositeComponent initializeRootComponent() {
-        CompositeComponent root = new CompositeComponent("Root", 0, 0, 0, 0, 0, 0);
+        CompositeComponent root = new CompositeComponent("Root", 0, 0, 0, 1, 800, 800);
         CompositeComponent barn = new CompositeComponent("Barn", 1000, 10, 20, 50, 60, 30);
         CompositeComponent livestockArea = new CompositeComponent("Live-stock-area", 500, 15, 25, 30, 40, 20);
         LeafComponent cow = new LeafComponent("Cow", 200, 17, 27, 10, 10, 10);
