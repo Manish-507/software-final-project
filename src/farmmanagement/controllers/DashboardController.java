@@ -45,6 +45,14 @@ public class DashboardController implements Initializable {
                 if (selectedItem != null) {
                     String component = selectedItem.getValue();
                     FarmComponent selectedComponent = rootComponent.findComponentByName(component);
+
+                    System.out.println("Selected item name: " + component);
+                    if (selectedComponent == null) {
+                        System.out.println("Component not found in the tree!");
+                    } else {
+                        System.out.println("Found component type: " + selectedComponent.getClass().getSimpleName());
+                    }
+
                     if (selectedComponent instanceof CompositeComponent) {
                         launchEditWindow("/farmmanagement/views/EditItemContainer.fxml", "Edit Item Container", selectedComponent);
                     } else if (selectedComponent instanceof LeafComponent) {
@@ -92,17 +100,24 @@ public class DashboardController implements Initializable {
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource(fxmlPath));
             Parent root = loader.load();
+
+            // Handle CompositeComponent
             if (component instanceof CompositeComponent) {
                 EditItemContainerController controller = loader.getController();
                 controller.setCompositeComponent(rootComponent);
                 controller.setFarmComponent((CompositeComponent) component);
                 controller.setDashboardController(this);
                 controller.populateItemContainerDropdown();
-            } else if (component instanceof LeafComponent) {
-//                EditItemController controller = loader.getController();
-//                controller.setComponent((LeafComponent) component);
+            } // Handle LeafComponent
+            else if (component instanceof LeafComponent) {
+                EditItemController controller = loader.getController();
+                controller.setCompositeComponent(rootComponent);
+                controller.setFarmComponent((LeafComponent) component); // Cast to LeafComponent
+                controller.setDashboardController(this);
+                controller.populateItemContainerDropdown();
             }
 
+            // Show the edit window
             Stage stage = new Stage();
             stage.setTitle(title);
             stage.setScene(new Scene(root));

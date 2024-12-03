@@ -11,7 +11,7 @@ import javafx.scene.control.ComboBox;
 import javafx.scene.control.TextField;
 import javafx.stage.Stage;
 
-public class AddItemContainerController implements Initializable {
+public class EditItemController implements Initializable {
 
     @FXML
     private TextField nameField;
@@ -30,6 +30,7 @@ public class AddItemContainerController implements Initializable {
     @FXML
     private TextField heightField;
 
+    private FarmComponent toEditComponent;
     private CompositeComponent rootComponent;
     private CompositeComponent selectedComponent;
     private DashboardController dashboardController;
@@ -42,8 +43,19 @@ public class AddItemContainerController implements Initializable {
         this.dashboardController = dashboardController;
     }
 
+    public void setFarmComponent(FarmComponent toEditComponent) {
+        this.toEditComponent = toEditComponent;
+        nameField.setText(toEditComponent.getName());
+        priceField.setText(String.valueOf(toEditComponent.getPrice()));
+        positionXField.setText(String.valueOf(toEditComponent.getPosition()[0]));
+        positionYField.setText(String.valueOf(toEditComponent.getPosition()[1]));
+        lengthField.setText(String.valueOf(toEditComponent.getDimensions()[0]));
+        widthField.setText(String.valueOf(toEditComponent.getDimensions()[1]));
+        heightField.setText(String.valueOf(toEditComponent.getDimensions()[2]));
+    }
+
     @FXML
-    private void handleAddItemContainer() {
+    private void handleUpdateItem() {
         if (itemContainerDropdown.getValue() != null) {
             String selectedContainerName = itemContainerDropdown.getValue();
             setSelectedComponent(selectedContainerName);
@@ -57,9 +69,25 @@ public class AddItemContainerController implements Initializable {
             int width = Integer.parseInt(widthField.getText());
             int height = Integer.parseInt(heightField.getText());
 
-            CompositeComponent newComponent = new CompositeComponent(name, price, x, y, length, width, height);
-            selectedComponent.addComponent(newComponent);
+            toEditComponent.setName(name);
+            toEditComponent.setPrice(price);
+            toEditComponent.setPosition(x, y);
+            toEditComponent.setDimensions(length, width, height);
+
+            for (FarmComponent component : rootComponent.getAllNodes()) {
+                if (component instanceof CompositeComponent composite) {
+                    itemContainerDropdown.getItems().add(composite.getName());
+                    if (composite.getChildren().contains(toEditComponent)) {
+                        String selectedContainerName = composite.getName();
+                        composite.removeComponent(toEditComponent);
+                    }
+                }
+            }
+
+            selectedComponent.addComponent(toEditComponent);
+
             closeWindow();
+
             if (dashboardController != null) {
                 dashboardController.refreshTree(rootComponent);
             }
@@ -82,7 +110,7 @@ public class AddItemContainerController implements Initializable {
         if (nameField.getText().isEmpty()) {
             errorMessage += "Name cannot be empty.\n";
         }
-        if (priceField.getText().isEmpty() || !isInteger(priceField.getText())) {
+        if (priceField.getText().isEmpty() || !isDouble(priceField.getText())) {
             errorMessage += "Price must be a valid number.\n";
         }
         if (positionXField.getText().isEmpty() || !isInteger(positionXField.getText()) || !isInsideComponent(positionXField.getText(), positionYField.getText(), heightField.getText(), widthField.getText())) {
@@ -105,6 +133,15 @@ public class AddItemContainerController implements Initializable {
             return true;
         } else {
             showErrorDialog("Invalid Input", "Please fix the following errors:", errorMessage);
+            return false;
+        }
+    }
+
+    private boolean isDouble(String text) {
+        try {
+            Double.parseDouble(text);
+            return true;
+        } catch (NumberFormatException e) {
             return false;
         }
     }
@@ -154,15 +191,24 @@ public class AddItemContainerController implements Initializable {
     }
 
     public void populateItemContainerDropdown() {
-        itemContainerDropdown.getItems().clear(); // Clear existing items
-
         if (rootComponent != null) {
+            itemContainerDropdown.getItems().clear(); // Clear existing items
+            String selectedContainerName = null; // Variable to hold the container name
+
             for (FarmComponent component : rootComponent.getAllNodes()) {
-                System.out.println("Adding to ComboBox: " + component.getName());
-                if (component instanceof CompositeComponent) {
-                    itemContainerDropdown.getItems().add(component.getName());
+                if (component instanceof CompositeComponent composite) {
+                    itemContainerDropdown.getItems().add(composite.getName());
+                    if (composite.getChildren().contains(toEditComponent)) {
+                        selectedContainerName = composite.getName();
+                    }
                 }
             }
+
+            // Set the selected item in the ComboBox
+            if (selectedContainerName != null) {
+                itemContainerDropdown.setValue(selectedContainerName);
+            }
+
         }
     }
 

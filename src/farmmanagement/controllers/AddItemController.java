@@ -73,7 +73,7 @@ public class AddItemController implements Initializable {
 
     // HELPER METHODS
     private void setSelectedComponent(String selectedContainerName) {
-        selectedComponent = rootComponent.findComponentByName(selectedContainerName);
+        selectedComponent = (CompositeComponent) rootComponent.findComponentByName(selectedContainerName);
         System.out.print("Selected Dropdown Option: " + selectedComponent.getName());
     }
 

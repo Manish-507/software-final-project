@@ -52,35 +52,34 @@ public class CompositeComponent extends AbstractFarmComponent {
 
     public List<FarmComponent> getAllNodes() {
         List<FarmComponent> nodes = new ArrayList<>();
-        nodes.add(this); // Add the current composite node
-
+        nodes.add(this);
         // Recursively add all children nodes
         for (FarmComponent child : children) {
             if (child instanceof CompositeComponent) {
-                // If the child is a CompositeComponent, get its nodes
                 nodes.addAll(((CompositeComponent) child).getAllNodes());
             }
         }
         return nodes;
     }
 
-    public CompositeComponent findComponentByName(String name) {
-        // Check if this component matches the name
+    public FarmComponent findComponentByName(String name) {
         if (this.getName().equals(name)) {
-            return this;
+            return this;  // Return the current component
         }
 
         // Recursively search through children
         for (FarmComponent child : this.getChildren()) {
             if (child instanceof CompositeComponent) {
-                CompositeComponent found = ((CompositeComponent) child).findComponentByName(name);
+                FarmComponent found = ((CompositeComponent) child).findComponentByName(name);
                 if (found != null) {
                     return found;
                 }
+            } else if (child instanceof LeafComponent) {
+                if (child.getName().equals(name)) {
+                    return child;
+                }
             }
         }
-
-        // Return null if not found
         return null;
     }
 
